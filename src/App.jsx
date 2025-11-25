@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const levelSettings = {
   1: { min: 10, max: 50, name: "Beginner" },
@@ -41,6 +41,10 @@ export default function App() {
   const [showResults, setShowResults] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+
+  // Music control state
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (!isRunning) return;
@@ -90,17 +94,44 @@ export default function App() {
     setTime(0);
   };
 
+  // Music control function
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (isMusicPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsMusicPlaying(!isMusicPlaying);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-8">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-teal-900 mb-2">
             🧘 Focus & Relax
           </h1>
-          <p className="text-teal-700">
+          <p className="text-teal-700 mb-4">
             Count the images to improve your visual focus
           </p>
+
+          {/* Music Control Button */}
+          <button
+            onClick={toggleMusic}
+            className="px-6 py-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-all shadow-md hover:shadow-lg"
+          >
+            {isMusicPlaying ? "🔊 Pause Music" : "🎵 Play Music"}
+          </button>
         </div>
+
+        {/* Hidden Audio Element */}
+        <audio ref={audioRef} loop>
+          <source src="/background-music.m4a" type="audio/mp4" />
+          Your browser does not support the audio element.
+        </audio>
 
         {!gameStarted && (
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 max-w-2xl mx-auto">
